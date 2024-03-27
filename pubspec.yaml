@@ -37,6 +37,10 @@ dependencies:
   sqflite: any
   url_launcher: ^6.1.5
   image_picker: ^0.8.5+3
+  mobx: ^2.3.0+1
+  flutter_modular: ^5.0.3
+  flutter_mobx: ^2.2.0+2
+  flutter_contacts: ^1.1.7+1
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +52,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  mobx_codegen: ^2.3.0
+  build_runner: ^2.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,7 +71,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - images/person.jpg
+    - images/person.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
