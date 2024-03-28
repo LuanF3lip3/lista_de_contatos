@@ -58,5 +58,7 @@
     </array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSContactsUsageDescription</key>
+      <string>Reason we need access to the contact list</string>
 </dict>
 </plist>

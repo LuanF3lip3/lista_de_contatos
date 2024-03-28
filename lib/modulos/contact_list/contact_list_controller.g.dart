@@ -25,6 +25,16 @@ mixin _$ContactListController on ContactListControllerBase, Store {
     });
   }
 
+  late final _$getContactsFromDeviceAsyncAction = AsyncAction(
+      'ContactListControllerBase.getContactsFromDevice',
+      context: context);
+
+  @override
+  Future<void> getContactsFromDevice() {
+    return _$getContactsFromDeviceAsyncAction
+        .run(() => super.getContactsFromDevice());
+  }
+
   late final _$ContactListControllerBaseActionController =
       ActionController(name: 'ContactListControllerBase', context: context);
 

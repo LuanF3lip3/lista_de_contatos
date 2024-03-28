@@ -37,73 +37,74 @@ class _ContactListPageState extends State<ContactListPage> {
 
   _showOptions(BuildContext context, int index) {
     showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return BottomSheet(
-            onClosing: () {},
-            builder: (context) {
-              return Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: TextButton(
-                        onPressed: () {
-                          // launch("sms: ${controller.contacts[index].phone}");
-                          Future<void> makePhoneCall(String? phone) async {
-                            final Uri launchUri = Uri(
-                              scheme: 'sms',
-                              path: phone ?? "",
-                            );
-                            await launchUrl(launchUri);
-                          }
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          builder: (context) {
+            return Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {
+                        // launch("sms: ${controller.contacts[index].phone}");
+                        Future<void> makePhoneCall(String? phone) async {
+                          final Uri launchUri = Uri(
+                            scheme: 'sms',
+                            path: phone ?? "",
+                          );
+                          await launchUrl(launchUri);
+                        }
 
-                          makePhoneCall("${controller.contacts[index].phone}");
+                        makePhoneCall("${controller.contacts[index].phone}");
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Ligar",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showContactPage(contact: controller.contacts[index]);
+                      },
+                      child: Text(
+                        "Editar",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {
+                        controller.helper.deleteContact(controller.contacts[index].id!);
+                        setState(() {
+                          controller.contacts.removeAt(index);
                           Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Ligar",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
+                        });
+                      },
+                      child: Text(
+                        "Excluir",
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showContactPage(contact: controller.contacts[index]);
-                        },
-                        child: Text(
-                          "Editar",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: TextButton(
-                        onPressed: () {
-                          controller.helper.deleteContact(controller.contacts[index].id!);
-                          setState(() {
-                            controller.contacts.removeAt(index);
-                            Navigator.pop(context);
-                          });
-                        },
-                        child: Text(
-                          "Excluir",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        });
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override

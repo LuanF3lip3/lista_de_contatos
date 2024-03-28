@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:udemy_lista_de_contatos/modulos/add_contact/contact_controller.dart';
-import 'package:udemy_lista_de_contatos/shared/constants.dart';
 import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
 
 class ContactPage extends StatefulWidget {
