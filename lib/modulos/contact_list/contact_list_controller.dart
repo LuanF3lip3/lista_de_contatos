@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
-import 'package:udemy_lista_de_contatos/shared/enums/order_options.dart';
-import 'package:udemy_lista_de_contatos/shared/helpers/contact_helper.dart';
-import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:udemy_lista_de_contatos/app/app_routes.dart';
+import 'package:udemy_lista_de_contatos/core/enums/order_options.dart';
+import 'package:udemy_lista_de_contatos/core/helpers/contact_helper.dart';
+import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/core/ui/scaffold_messenger_component.dart';
 
 part 'contact_list_controller.g.dart';
 
@@ -18,10 +21,22 @@ abstract class ContactListControllerBase with Store {
 
   @action
   void getAllContacts() {
-    helper.getAllContact().then((list) {
-      contacts.clear();
-      contacts.addAll(ObservableList.of([...list]));
-    });
+    helper.getAllContact().then(
+      (list) {
+        contacts.clear();
+        contacts.addAll(ObservableList.of([...list]));
+        contacts.sort(
+          (a, b) {
+            return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
+          },
+        );
+      },
+    );
+  }
+
+  @action
+  void goToContactPage(ContactModel? contact) {
+    AppRoutes.goToContact(contact);
   }
 
   @action
@@ -51,15 +66,32 @@ abstract class ContactListControllerBase with Store {
   Future<void> getContactsFromDevice() async {
     if (await FlutterContacts.requestPermission()) {
       List<Contact> contacts = await FlutterContacts.getContacts();
-      print(contacts);
+      List<ContactModel> newContacts = [];
+      for (var contact in contacts) {
+        var rep = this.contacts.where((element) => element.name == contact.displayName);
+        if (rep.isNotEmpty) {
+          await helper.deleteContact(rep.first.id ?? 0);
+        }
+        ContactModel newContact = ContactModel(
+          name: contact.displayName,
+          email: contact.phones.isNotEmpty ? contact.phones.first.number : null,
+          phone: contact.phones.isNotEmpty ? contact.phones.first.number : null,
+          img: contact.photo != null ? File.fromRawPath(contact.photo!).path : null,
+        );
+        newContacts.add(newContact);
+      }
+      for (var contact in newContacts) {
+        await helper.saveContact(contact);
+      }
+      getAllContacts();
     } else {
-      showBottomSheet(
-        context: Modular.routerDelegate.navigatorKey.currentContext!,
-        builder: (context) {
-          return Container(
-            child: Text("Para trazer os contatos do dispositivo, e necessario aceitar a permissão"),
-          );
+      ScaffoldMessengerComponent().showSnackBar(
+        description: "Permissão negada! Permita o acesso aos contatos para continuar.",
+        tapTitle: "Permitir",
+        onTap: () {
+          openAppSettings();
         },
+        duration: 4,
       );
     }
   }

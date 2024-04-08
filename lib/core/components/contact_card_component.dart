@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
 
 class ContactCardComponent extends StatelessWidget {
   final ContactModel contact;

@@ -17,14 +17,15 @@ class AppWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: ThemeData(
-        primaryColor: const Color(0xFF820BD1),
+        shadowColor: const Color(0xFFEEEEEE),
+        primaryColor: const Color(0xFF53A6A6),
         hintColor: const Color(0xFF000000),
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF820BD1),
+          backgroundColor: Color(0xFF53A6A6),
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF820BD1),
+          backgroundColor: Color(0xFF53A6A6),
           foregroundColor: Colors.white,
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -56,10 +57,26 @@ class AppWidget extends StatelessWidget {
             color: Colors.black,
             fontSize: 18.0,
           ),
+          labelSmall: TextStyle(
+            color: Colors.black,
+            fontSize: 15,
+          ),
           titleMedium: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 20.0,
+          ),
+          displayMedium: TextStyle(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+          ),
+          displaySmall: TextStyle(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
           ),
           titleSmall: TextStyle(
             color: Colors.black54,

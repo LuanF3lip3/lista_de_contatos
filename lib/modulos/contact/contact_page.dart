@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:udemy_lista_de_contatos/modulos/add_contact/contact_controller.dart';
-import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/modulos/contact/contact_controller.dart';
+import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/modulos/contact_list/contact_list_controller.dart';
 
 class ContactPage extends StatefulWidget {
   final ContactModel? contact;
@@ -65,9 +67,8 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _requestPop(),
-      child: Observer(builder: (_) {
+    return Observer(
+      builder: (_) {
         return Scaffold(
           appBar: AppBar(
             title: const Text("Novo Contato"),
@@ -160,7 +161,7 @@ class _ContactPageState extends State<ContactPage> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               if (controller.contactValid) {
                 controller.saveContact();
                 Navigator.pop(context);
@@ -173,7 +174,7 @@ class _ContactPageState extends State<ContactPage> {
             ),
           ),
         );
-      }),
+      },
     );
   }
 }

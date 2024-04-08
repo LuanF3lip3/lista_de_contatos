@@ -11,7 +11,13 @@ class ContactModel {
   String? phone;
   String? img;
 
-  ContactModel();
+  ContactModel({
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.img,
+  });
 
   ContactModel.fromMap(Map map) {
     id = map[idColumn];

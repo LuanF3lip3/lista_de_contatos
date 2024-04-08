@@ -59,6 +59,6 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSContactsUsageDescription</key>
-      <string>Reason we need access to the contact list</string>
+      <string>The application needs to read and write contacts.</string>
 </dict>
 </plist>

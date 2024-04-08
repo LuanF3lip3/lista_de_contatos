@@ -1,6 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
 
 const String contactTable = "contactTable";
 

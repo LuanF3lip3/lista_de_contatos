@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:udemy_lista_de_contatos/modulos/add_contact/contact_page.dart';
 import 'package:udemy_lista_de_contatos/modulos/contact_list/contact_list_controller.dart';
-import 'package:udemy_lista_de_contatos/shared/components/contact_card_component.dart';
-import 'package:udemy_lista_de_contatos/shared/enums/order_options.dart';
-import 'package:udemy_lista_de_contatos/shared/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/core/components/contact_card_component.dart';
+import 'package:udemy_lista_de_contatos/core/components/empty_message_component.dart';
+import 'package:udemy_lista_de_contatos/core/enums/order_options.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactListPage extends StatefulWidget {
@@ -20,18 +19,6 @@ class _ContactListPageState extends State<ContactListPage> {
   @override
   void initState() {
     super.initState();
-    controller.getAllContacts();
-  }
-
-  void _showContactPage({ContactModel? contact}) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ContactPage(
-          contact: contact,
-        ),
-      ),
-    );
     controller.getAllContacts();
   }
 
@@ -74,7 +61,7 @@ class _ContactListPageState extends State<ContactListPage> {
                     child: TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        _showContactPage(contact: controller.contacts[index]);
+                        controller.goToContactPage(controller.contacts[index]);
                       },
                       child: Text(
                         "Editar",
@@ -145,24 +132,29 @@ class _ContactListPageState extends State<ContactListPage> {
             ],
           ),
           backgroundColor: Colors.white,
-          body: ListView.builder(
-            padding: const EdgeInsets.all(10),
-            itemCount: controller.contacts.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: ContactCardComponent(
-                  contact: controller.contacts[index],
-                  onTap: () {
-                    _showOptions(context, index);
+          body: controller.contacts.isEmpty
+              ? const EmptyMessageComponent(
+                  "Nenhum contato encontrado",
+                  centralize: true,
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(10),
+                  itemCount: controller.contacts.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: ContactCardComponent(
+                        contact: controller.contacts[index],
+                        onTap: () {
+                          _showOptions(context, index);
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              _showContactPage();
+              controller.goToContactPage(null);
             },
             child: const Icon(
               Icons.add,

@@ -50,6 +50,17 @@ mixin _$ContactListController on ContactListControllerBase, Store {
   }
 
   @override
+  void goToContactPage(ContactModel? contact) {
+    final _$actionInfo = _$ContactListControllerBaseActionController
+        .startAction(name: 'ContactListControllerBase.goToContactPage');
+    try {
+      return super.goToContactPage(contact);
+    } finally {
+      _$ContactListControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void orderList(OrderOptions result) {
     final _$actionInfo = _$ContactListControllerBaseActionController
         .startAction(name: 'ContactListControllerBase.orderList');
