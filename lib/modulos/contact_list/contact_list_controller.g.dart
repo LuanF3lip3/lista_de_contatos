@@ -9,6 +9,24 @@ part of 'contact_list_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ContactListController on ContactListControllerBase, Store {
+  late final _$permissionToAccessContactsAtom = Atom(
+      name: 'ContactListControllerBase.permissionToAccessContacts',
+      context: context);
+
+  @override
+  bool get permissionToAccessContacts {
+    _$permissionToAccessContactsAtom.reportRead();
+    return super.permissionToAccessContacts;
+  }
+
+  @override
+  set permissionToAccessContacts(bool value) {
+    _$permissionToAccessContactsAtom
+        .reportWrite(value, super.permissionToAccessContacts, () {
+      super.permissionToAccessContacts = value;
+    });
+  }
+
   late final _$helperAtom =
       Atom(name: 'ContactListControllerBase.helper', context: context);
 
@@ -25,6 +43,14 @@ mixin _$ContactListController on ContactListControllerBase, Store {
     });
   }
 
+  late final _$allowContactsAsyncAction =
+      AsyncAction('ContactListControllerBase.allowContacts', context: context);
+
+  @override
+  Future<void> allowContacts() {
+    return _$allowContactsAsyncAction.run(() => super.allowContacts());
+  }
+
   late final _$getContactsFromDeviceAsyncAction = AsyncAction(
       'ContactListControllerBase.getContactsFromDevice',
       context: context);
@@ -39,11 +65,12 @@ mixin _$ContactListController on ContactListControllerBase, Store {
       ActionController(name: 'ContactListControllerBase', context: context);
 
   @override
-  void getAllContacts() {
-    final _$actionInfo = _$ContactListControllerBaseActionController
-        .startAction(name: 'ContactListControllerBase.getAllContacts');
+  void changePermissionToAccessContacts(bool val) {
+    final _$actionInfo =
+        _$ContactListControllerBaseActionController.startAction(
+            name: 'ContactListControllerBase.changePermissionToAccessContacts');
     try {
-      return super.getAllContacts();
+      return super.changePermissionToAccessContacts(val);
     } finally {
       _$ContactListControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -74,6 +101,7 @@ mixin _$ContactListController on ContactListControllerBase, Store {
   @override
   String toString() {
     return '''
+permissionToAccessContacts: ${permissionToAccessContacts},
 helper: ${helper}
     ''';
   }

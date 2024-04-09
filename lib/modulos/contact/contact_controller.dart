@@ -68,6 +68,6 @@ abstract class ContactControllerBase with Store {
     if (contactValid) {
       await ContactHelper().saveContact(editedContact);
     }
-    Modular.get<ContactListController>().getAllContacts();
+    Modular.get<ContactListController>().getContactsFromDevice();
   }
 }

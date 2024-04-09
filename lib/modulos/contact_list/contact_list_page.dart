@@ -19,7 +19,7 @@ class _ContactListPageState extends State<ContactListPage> {
   @override
   void initState() {
     super.initState();
-    controller.getAllContacts();
+    controller.getContactsFromDevice();
   }
 
   _showOptions(BuildContext context, int index) {
@@ -102,16 +102,14 @@ class _ContactListPageState extends State<ContactListPage> {
           appBar: AppBar(
             title: const Text("Contatos"),
             centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {},
+            ),
             actions: [
               PopupMenuButton<OrderOptions>(
+                icon: const Icon(Icons.filter_alt_sharp),
                 itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-                  PopupMenuItem(
-                    value: OrderOptions.loadContacts,
-                    child: Text(
-                      "Carregar contatos do dispositivo",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ),
                   PopupMenuItem(
                     value: OrderOptions.orderAZ,
                     child: Text(
@@ -132,25 +130,42 @@ class _ContactListPageState extends State<ContactListPage> {
             ],
           ),
           backgroundColor: Colors.white,
-          body: controller.contacts.isEmpty
-              ? const EmptyMessageComponent(
-                  "Nenhum contato encontrado",
-                  centralize: true,
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(10),
-                  itemCount: controller.contacts.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: ContactCardComponent(
-                        contact: controller.contacts[index],
-                        onTap: () {
-                          _showOptions(context, index);
-                        },
-                      ),
-                    );
-                  },
+          body: controller.permissionToAccessContacts
+              ? controller.contacts.isEmpty
+                  ? const EmptyMessageComponent(
+                      "Nenhum contato encontrado",
+                      centralize: true,
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(10),
+                      itemCount: controller.contacts.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: ContactCardComponent(
+                            contact: controller.contacts[index],
+                            onTap: () {
+                              _showOptions(context, index);
+                            },
+                          ),
+                        );
+                      },
+                    )
+              : Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const EmptyMessageComponent(
+                      "Por favor, para ver os contatos, permita o aplicativo.",
+                      centralize: true,
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        controller.allowContacts();
+                      },
+                      child: const Text("Permitir"),
+                    ),
+                  ],
                 ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {

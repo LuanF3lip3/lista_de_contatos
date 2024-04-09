@@ -48,8 +48,13 @@ class AppWidget extends StatelessWidget {
           primary: Color(0xFFeeeeee),
         ),
         buttonTheme: const ButtonThemeData(
-          highlightColor: Color(0xFFe1e1e1),
-          buttonColor: Color(0xFFe1e1e1),
+          highlightColor: Color(0xffffffff),
+          buttonColor: Color(0xff53a6a6),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(const Color(0xFF53A6A6))
+          )
         ),
         fontFamily: 'Roboto',
         textTheme: const TextTheme(

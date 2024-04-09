@@ -7,7 +7,6 @@ import 'package:udemy_lista_de_contatos/app/app_routes.dart';
 import 'package:udemy_lista_de_contatos/core/enums/order_options.dart';
 import 'package:udemy_lista_de_contatos/core/helpers/contact_helper.dart';
 import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
-import 'package:udemy_lista_de_contatos/core/ui/scaffold_messenger_component.dart';
 
 part 'contact_list_controller.g.dart';
 
@@ -17,21 +16,17 @@ abstract class ContactListControllerBase with Store {
   ObservableList<ContactModel> contacts = ObservableList();
 
   @observable
+  bool permissionToAccessContacts = true;
+
+  @observable
   ContactHelper helper = ContactHelper();
 
   @action
-  void getAllContacts() {
-    helper.getAllContact().then(
-      (list) {
-        contacts.clear();
-        contacts.addAll(ObservableList.of([...list]));
-        contacts.sort(
-          (a, b) {
-            return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
-          },
-        );
-      },
-    );
+  void changePermissionToAccessContacts(bool val) => permissionToAccessContacts = val;
+
+  @action
+  Future<void> allowContacts() async {
+    await openAppSettings();
   }
 
   @action
@@ -56,22 +51,16 @@ abstract class ContactListControllerBase with Store {
           },
         );
         break;
-      case OrderOptions.loadContacts:
-        getContactsFromDevice();
-        break;
     }
   }
 
   @action
   Future<void> getContactsFromDevice() async {
     if (await FlutterContacts.requestPermission()) {
+      changePermissionToAccessContacts(true);
       List<Contact> contacts = await FlutterContacts.getContacts();
       List<ContactModel> newContacts = [];
       for (var contact in contacts) {
-        var rep = this.contacts.where((element) => element.name == contact.displayName);
-        if (rep.isNotEmpty) {
-          await helper.deleteContact(rep.first.id ?? 0);
-        }
         ContactModel newContact = ContactModel(
           name: contact.displayName,
           email: contact.phones.isNotEmpty ? contact.phones.first.number : null,
@@ -80,19 +69,15 @@ abstract class ContactListControllerBase with Store {
         );
         newContacts.add(newContact);
       }
-      for (var contact in newContacts) {
-        await helper.saveContact(contact);
-      }
-      getAllContacts();
-    } else {
-      ScaffoldMessengerComponent().showSnackBar(
-        description: "Permissão negada! Permita o acesso aos contatos para continuar.",
-        tapTitle: "Permitir",
-        onTap: () {
-          openAppSettings();
+      this.contacts.clear();
+      this.contacts.addAll(ObservableList.of([...newContacts]));
+      this.contacts.sort(
+        (a, b) {
+          return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
         },
-        duration: 4,
       );
+    } else {
+      changePermissionToAccessContacts(false);
     }
   }
 }

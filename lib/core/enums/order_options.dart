@@ -1,1 +1,1 @@
-enum OrderOptions { orderAZ, orderZA, loadContacts }
+enum OrderOptions { orderAZ, orderZA}
