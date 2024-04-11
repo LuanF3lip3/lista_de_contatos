@@ -235,6 +235,17 @@ mixin _$ContactController on ContactControllerBase, Store {
   }
 
   @override
+  void initPage(ContactModel? contact) {
+    final _$actionInfo = _$ContactControllerBaseActionController.startAction(
+        name: 'ContactControllerBase.initPage');
+    try {
+      return super.initPage(contact);
+    } finally {
+      _$ContactControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 nameController: ${nameController},

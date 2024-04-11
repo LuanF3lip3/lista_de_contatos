@@ -72,12 +72,11 @@ class _ContactListPageState extends State<ContactListPage> {
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextButton(
-                      onPressed: () {
-                        controller.helper.deleteContact(controller.contacts[index].id!);
-                        setState(() {
-                          controller.contacts.removeAt(index);
+                      onPressed: () async {
+                        await controller.deleteContact(controller.contacts[index], index);
+                        if (mounted) {
                           Navigator.pop(context);
-                        });
+                        }
                       },
                       child: Text(
                         "Excluir",
@@ -136,20 +135,25 @@ class _ContactListPageState extends State<ContactListPage> {
                       "Nenhum contato encontrado",
                       centralize: true,
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(10),
-                      itemCount: controller.contacts.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: ContactCardComponent(
-                            contact: controller.contacts[index],
-                            onTap: () {
-                              _showOptions(context, index);
-                            },
-                          ),
-                        );
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        controller.getContactsFromDevice();
                       },
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(10),
+                        itemCount: controller.contacts.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: ContactCardComponent(
+                              contact: controller.contacts[index],
+                              onTap: () {
+                                _showOptions(context, index);
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     )
               : Column(
                   mainAxisSize: MainAxisSize.max,

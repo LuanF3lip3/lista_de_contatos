@@ -1,8 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mobx/mobx.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:udemy_lista_de_contatos/app/app_routes.dart';
@@ -32,8 +28,9 @@ abstract class ContactListControllerBase with Store {
   }
 
   @action
-  void goToContactPage(ContactModel? contact) {
-    AppRoutes.goToContact(contact);
+  Future<void> goToContactPage(ContactModel? contact) async{
+    await AppRoutes.goToContact(contact);
+    getContactsFromDevice();
   }
 
   @action
@@ -41,14 +38,14 @@ abstract class ContactListControllerBase with Store {
     switch (result) {
       case OrderOptions.orderAZ:
         contacts.sort(
-          (a, b) {
+              (a, b) {
             return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
           },
         );
         break;
       case OrderOptions.orderZA:
         contacts.sort(
-          (a, b) {
+              (a, b) {
             return b.name!.toLowerCase().compareTo(a.name!.toLowerCase());
           },
         );
@@ -64,8 +61,9 @@ abstract class ContactListControllerBase with Store {
       List<ContactModel> newContacts = [];
       for (var contact in contacts) {
         final Contact? c = await FlutterContacts.getContact(contact.id);
-        if(c!= null) {
+        if (c != null) {
           ContactModel newContact = ContactModel(
+            id: c.id,
             name: c.displayName,
             email: c.emails.isNotEmpty ? c.emails.first.address : null,
             phone: c.phones.isNotEmpty ? c.phones.first.number : null,
@@ -77,12 +75,21 @@ abstract class ContactListControllerBase with Store {
       this.contacts.clear();
       this.contacts.addAll(ObservableList.of([...newContacts]));
       this.contacts.sort(
-        (a, b) {
+            (a, b) {
           return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
         },
       );
     } else {
       changePermissionToAccessContacts(false);
+    }
+  }
+
+  Future<void> deleteContact(ContactModel contactModel, int index) async {
+    Contact? contactOrigin = await FlutterContacts.getContact(
+        contactModel.id ?? "");
+    if (contactOrigin != null) {
+      FlutterContacts.deleteContact(contactOrigin);
+      contacts.removeAt(index);
     }
   }
 }

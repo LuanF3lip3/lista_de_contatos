@@ -7,7 +7,7 @@ class ContactModel {
   static const String phoneColumn = "phone";
   static const String imgColumn = "img";
 
-  int? id;
+  String? id;
   String? name;
   String? email;
   String? phone;
@@ -31,14 +31,12 @@ class ContactModel {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
+      idColumn: id,
       nameColumn: name,
       emailColumn: email,
       phoneColumn: phone,
       imgColumn: img,
     };
-    if (id != null) {
-      map[idColumn] = id;
-    }
     return map;
   }
 

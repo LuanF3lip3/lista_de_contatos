@@ -42,7 +42,7 @@ class ContactCardComponent extends StatelessWidget {
                       )
                     : Center(
                         child: Text(
-                          contact.name!.substring(0, 1),
+                          contact.name!.substring(0, 1).toUpperCase(),
                           style: const TextStyle(fontSize: 60, color: Colors.white),
                         ),
                       )

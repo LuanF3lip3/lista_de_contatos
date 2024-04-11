@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:udemy_lista_de_contatos/modulos/contact/contact_controller.dart';
 import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
+import 'package:udemy_lista_de_contatos/modulos/contact_list/contact_list_controller.dart';
 
 class ContactPage extends StatefulWidget {
   final ContactModel? contact;
@@ -20,15 +21,7 @@ class _ContactPageState extends State<ContactPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.contact == null) {
-      controller.editedContact = ContactModel();
-    } else {
-      controller.editedContact = ContactModel.fromMap(widget.contact!.toMap());
-
-      controller.nameController.text = controller.editedContact.name ?? "";
-      controller.emailController.text = controller.editedContact.email ?? "";
-      controller.phoneController.text = controller.editedContact.phone ?? "";
-    }
+    controller.initPage(widget.contact);
   }
 
   final controller = ContactController();
@@ -157,6 +150,7 @@ class _ContactPageState extends State<ContactPage> {
             }
             if (mounted) {
               Navigator.pop(context);
+              ContactListController().getContactsFromDevice();
             }
           } else {
             FocusScope.of(context).requestFocus(controller.nameFocus);

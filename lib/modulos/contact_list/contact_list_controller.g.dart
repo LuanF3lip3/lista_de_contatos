@@ -51,6 +51,16 @@ mixin _$ContactListController on ContactListControllerBase, Store {
     return _$allowContactsAsyncAction.run(() => super.allowContacts());
   }
 
+  late final _$goToContactPageAsyncAction = AsyncAction(
+      'ContactListControllerBase.goToContactPage',
+      context: context);
+
+  @override
+  Future<void> goToContactPage(ContactModel? contact) {
+    return _$goToContactPageAsyncAction
+        .run(() => super.goToContactPage(contact));
+  }
+
   late final _$getContactsFromDeviceAsyncAction = AsyncAction(
       'ContactListControllerBase.getContactsFromDevice',
       context: context);
@@ -71,17 +81,6 @@ mixin _$ContactListController on ContactListControllerBase, Store {
             name: 'ContactListControllerBase.changePermissionToAccessContacts');
     try {
       return super.changePermissionToAccessContacts(val);
-    } finally {
-      _$ContactListControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void goToContactPage(ContactModel? contact) {
-    final _$actionInfo = _$ContactListControllerBaseActionController
-        .startAction(name: 'ContactListControllerBase.goToContactPage');
-    try {
-      return super.goToContactPage(contact);
     } finally {
       _$ContactListControllerBaseActionController.endAction(_$actionInfo);
     }

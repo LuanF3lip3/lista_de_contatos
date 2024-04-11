@@ -13,7 +13,7 @@ class ContactModule extends Module {
     ChildRoute(
       '/',
       child: (_, args) => ContactPage(
-        contact: args.params[0],
+        contact: args.data,
       ),
     ),
   ];

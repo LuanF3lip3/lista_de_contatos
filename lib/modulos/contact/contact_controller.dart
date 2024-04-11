@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -79,6 +78,7 @@ abstract class ContactControllerBase with Store {
   Future<void> saveContact() async {
     if (contactValid) {
       Contact contact = Contact(
+        id: editedContact.id ?? "",
         photo:
             editedContact.img != null && editedContact.img!.isNotEmpty ? editedContact.img! : null,
         name: editedContact.name != null ? Name(first: editedContact.name!) : null,
@@ -86,9 +86,25 @@ abstract class ContactControllerBase with Store {
         phones: [Phone(editedContact.phone ?? "")],
         emails: [Email(editedContact.email ?? "")],
       );
-      FlutterContacts.insertContact(contact);
-      await ContactHelper().saveContact(editedContact);
+      editedContact.id != null && editedContact.id!.isNotEmpty
+          ? await FlutterContacts.updateContact(contact)
+          : await FlutterContacts.insertContact(contact);
     }
-    Modular.get<ContactListController>().getContactsFromDevice();
+  }
+
+  @action
+  void initPage(ContactModel? contact) {
+    if (contact == null) {
+      editedContact = ContactModel();
+    } else {
+      editedContact = ContactModel.fromMap(contact.toMap());
+      changeImg(editedContact.img);
+      changeName(editedContact.name ?? "");
+      changeEmail(editedContact.email ?? "");
+      changePhone(editedContact.phone ?? "");
+      nameController.text = editedContact.name ?? "";
+      emailController.text = editedContact.email ?? "";
+      phoneController.text = editedContact.phone ?? "";
+    }
   }
 }

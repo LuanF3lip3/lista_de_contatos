@@ -9,7 +9,7 @@ class AppRoutes {
     Modular.to.pushNamed(routeContactList);
   }
 
-  static void goToContact(ContactModel? contact) {
-    Modular.to.pushNamed(routeContact, arguments: contact);
+  static Future<void> goToContact(ContactModel? contact) async{
+    await Modular.to.pushNamed(routeContact, arguments: contact);
   }
 }
