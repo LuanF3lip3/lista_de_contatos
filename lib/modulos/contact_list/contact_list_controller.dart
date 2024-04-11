@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobx/mobx.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:udemy_lista_de_contatos/app/app_routes.dart';
@@ -61,13 +63,16 @@ abstract class ContactListControllerBase with Store {
       List<Contact> contacts = await FlutterContacts.getContacts();
       List<ContactModel> newContacts = [];
       for (var contact in contacts) {
-        ContactModel newContact = ContactModel(
-          name: contact.displayName,
-          email: contact.phones.isNotEmpty ? contact.phones.first.number : null,
-          phone: contact.phones.isNotEmpty ? contact.phones.first.number : null,
-          img: contact.photo != null ? File.fromRawPath(contact.photo!).path : null,
-        );
-        newContacts.add(newContact);
+        final Contact? c = await FlutterContacts.getContact(contact.id);
+        if(c!= null) {
+          ContactModel newContact = ContactModel(
+            name: c.displayName,
+            email: c.emails.isNotEmpty ? c.emails.first.address : null,
+            phone: c.phones.isNotEmpty ? c.phones.first.number : null,
+            img: c.photo,
+          );
+          newContacts.add(newContact);
+        }
       }
       this.contacts.clear();
       this.contacts.addAll(ObservableList.of([...newContacts]));

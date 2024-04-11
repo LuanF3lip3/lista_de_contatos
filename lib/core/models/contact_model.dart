@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class ContactModel {
   static const String idColumn = "id";
   static const String nameColumn = "name";
@@ -9,7 +11,7 @@ class ContactModel {
   String? name;
   String? email;
   String? phone;
-  String? img;
+  Uint8List? img;
 
   ContactModel({
     this.id,

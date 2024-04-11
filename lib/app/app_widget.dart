@@ -20,6 +20,7 @@ class AppWidget extends StatelessWidget {
         shadowColor: const Color(0xFFEEEEEE),
         primaryColor: const Color(0xFF53A6A6),
         hintColor: const Color(0xFF000000),
+        hoverColor: const Color(0xFF3B3B3B),
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF53A6A6),
@@ -29,6 +30,9 @@ class AppWidget extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
         inputDecorationTheme: InputDecorationTheme(
+          hoverColor: const Color(0xFF000000),
+          focusColor: const Color(0xFF000000),
+          labelStyle: const TextStyle(color: Color(0xFF000000)),
           fillColor: Colors.black,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -51,10 +55,24 @@ class AppWidget extends StatelessWidget {
           highlightColor: Color(0xffffffff),
           buttonColor: Color(0xff53a6a6),
         ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(
+              const Color(0xFF000000),
+            ),
+            textStyle: MaterialStateProperty.all(
+              const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
         filledButtonTheme: FilledButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(const Color(0xFF53A6A6))
-          )
+            backgroundColor: MaterialStateProperty.all(
+              const Color(0xFF53A6A6),
+            ),
+          ),
         ),
         fontFamily: 'Roboto',
         textTheme: const TextTheme(

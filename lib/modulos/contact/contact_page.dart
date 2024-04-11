@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:udemy_lista_de_contatos/modulos/contact/contact_controller.dart';
 import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
@@ -16,6 +15,8 @@ class ContactPage extends StatefulWidget {
 }
 
 class _ContactPageState extends State<ContactPage> {
+  EdgeInsets inputPadding = const EdgeInsets.only(top: 15, left: 15, right: 15);
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +32,142 @@ class _ContactPageState extends State<ContactPage> {
   }
 
   final controller = ContactController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Observer(builder: (_) {
+        return CustomScrollView(
+          physics: const ScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              title: const Text("Novo Contato"),
+              stretch: true,
+              forceElevated: true,
+              expandedHeight: MediaQuery.of(context).size.height * 0.28,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.21,
+                          width: MediaQuery.of(context).size.height * 0.21,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: controller.img == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: MediaQuery.of(context).size.height * 0.16,
+                                  color: Theme.of(context).hoverColor,
+                                )
+                              : Image.memory(
+                                  controller.img!,
+                                  fit: BoxFit.fill,
+                                ),
+                        ),
+                        Positioned(
+                          right: 4,
+                          bottom: 8,
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: Theme.of(context).hoverColor,
+                              shape: const CircleBorder(),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.edit),
+                              color: Colors.white,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return _dialog(context);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                <Widget>[
+                  Padding(
+                    padding: inputPadding,
+                    child: TextField(
+                      cursorColor: Colors.black,
+                      controller: controller.nameController,
+                      focusNode: controller.nameFocus,
+                      decoration: const InputDecoration(labelText: "Nome"),
+                      style: Theme.of(context).textTheme.titleSmall,
+                      onChanged: (text) {
+                        controller.changeName(text);
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: inputPadding,
+                    child: TextField(
+                      cursorColor: Colors.black,
+                      controller: controller.emailController,
+                      decoration: const InputDecoration(labelText: "E-mail"),
+                      style: Theme.of(context).textTheme.titleSmall,
+                      onChanged: (text) {
+                        controller.changeEmail(text);
+                      },
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                  ),
+                  Padding(
+                    padding: inputPadding,
+                    child: TextField(
+                      cursorColor: Colors.black,
+                      controller: controller.phoneController,
+                      decoration: const InputDecoration(labelText: "Telefone"),
+                      style: Theme.of(context).textTheme.titleSmall,
+                      onChanged: (text) {
+                        controller.changePhone(text);
+                      },
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if (controller.contactValid) {
+            try {
+              await controller.saveContact();
+            } catch (err) {
+              debugPrint(err.toString());
+            }
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          } else {
+            FocusScope.of(context).requestFocus(controller.nameFocus);
+          }
+        },
+        child: const Icon(
+          Icons.save,
+        ),
+      ),
+    );
+  }
 
   Future<bool> _requestPop() {
     if (controller.userEdited) {
@@ -63,116 +200,82 @@ class _ContactPageState extends State<ContactPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Observer(
-      builder: (_) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Novo Contato"),
-            centerTitle: true,
+  AlertDialog _dialog(BuildContext context) {
+    return AlertDialog(
+      title: const Center(child: Text("Alterar imagem?")),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).hoverColor, shape: BoxShape.circle),
+                child: IconButton(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  onPressed: () {
+                    Modular.to.pop();
+                    ImagePicker().pickImage(source: ImageSource.camera).then(
+                      (file) {
+                        if (file == null) {
+                          return;
+                        } else {
+                          file.readAsBytes().then((value) => controller.changeImg(value));
+                        }
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.camera_alt),
+                ),
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).hoverColor, shape: BoxShape.circle),
+                child: IconButton(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  onPressed: () {
+                    Modular.to.pop();
+                    ImagePicker().pickImage(source: ImageSource.gallery).then(
+                      (file) {
+                        if (file == null) {
+                          return;
+                        } else {
+                          file.readAsBytes().then((value) => controller.changeImg(value));
+                        }
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.image),
+                ),
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).hoverColor, shape: BoxShape.circle),
+                child: IconButton(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  onPressed: () {
+                    Modular.to.pop();
+                    controller.changeImg(null);
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ),
+            ],
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                controller.editedContact.img == null
-                    ? Container(
-                        padding: const EdgeInsets.only(bottom: 35, top: 10),
-                        child: IconButton(
-                          iconSize: 140,
-                          onPressed: () {
-                            ImagePicker().pickImage(source: ImageSource.camera).then(
-                              (file) {
-                                if (file == null) {
-                                  return;
-                                } else {
-                                  controller.editedContact.img = file.path;
-                                }
-                              },
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.person,
-                            size: 140,
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: FileImage(
-                                File(
-                                  controller.editedContact.img!,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          controller.editedContact.img = null;
-                        },
-                      ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: TextField(
-                    controller: controller.nameController,
-                    focusNode: controller.nameFocus,
-                    decoration: const InputDecoration(labelText: "Nome"),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    onChanged: (text) {
-                      controller.changeName(text);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: TextField(
-                    controller: controller.emailController,
-                    decoration: const InputDecoration(labelText: "E-mail"),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    onChanged: (text) {
-                      controller.changeEmail(text);
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: TextField(
-                    controller: controller.phoneController,
-                    decoration: const InputDecoration(labelText: "Telefone"),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    onChanged: (text) {
-                      controller.changePhone(text);
-                    },
-                    keyboardType: TextInputType.phone,
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextButton(
+              onPressed: () {
+                Modular.to.pop();
+              },
+              child: const Text("Não"),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              if (controller.contactValid) {
-                controller.saveContact();
-                Navigator.pop(context);
-              } else {
-                FocusScope.of(context).requestFocus(controller.nameFocus);
-              }
-            },
-            child: const Icon(
-              Icons.save,
-            ),
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

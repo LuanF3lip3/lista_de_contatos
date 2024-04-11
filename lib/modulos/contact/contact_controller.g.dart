@@ -120,6 +120,22 @@ mixin _$ContactController on ContactControllerBase, Store {
     });
   }
 
+  late final _$imgAtom =
+      Atom(name: 'ContactControllerBase.img', context: context);
+
+  @override
+  Uint8List? get img {
+    _$imgAtom.reportRead();
+    return super.img;
+  }
+
+  @override
+  set img(Uint8List? value) {
+    _$imgAtom.reportWrite(value, super.img, () {
+      super.img = value;
+    });
+  }
+
   late final _$nameFocusAtom =
       Atom(name: 'ContactControllerBase.nameFocus', context: context);
 
@@ -197,6 +213,17 @@ mixin _$ContactController on ContactControllerBase, Store {
   }
 
   @override
+  void changeImg(Uint8List? value) {
+    final _$actionInfo = _$ContactControllerBaseActionController.startAction(
+        name: 'ContactControllerBase.changeImg');
+    try {
+      return super.changeImg(value);
+    } finally {
+      _$ContactControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void changeEditedContact(ContactModel value) {
     final _$actionInfo = _$ContactControllerBaseActionController.startAction(
         name: 'ContactControllerBase.changeEditedContact');
@@ -216,6 +243,7 @@ phoneController: ${phoneController},
 name: ${name},
 email: ${email},
 phone: ${phone},
+img: ${img},
 nameFocus: ${nameFocus},
 editedContact: ${editedContact},
 userEdited: ${userEdited},

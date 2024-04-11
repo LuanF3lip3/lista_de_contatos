@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:udemy_lista_de_contatos/core/models/contact_model.dart';
 
@@ -23,32 +21,35 @@ class ContactCardComponent extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-        )
+        ),
       ),
       child: Row(
         children: [
           Container(
             height: 80,
             width: 80,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: contact.img == null
-                  ? null
-                  : DecorationImage(
-                      image: FileImage(
-                        File(
-                          contact.img!,
-                        ),
-                      ),
-                    ),
+              color: contact.name!.isEmpty ? null : Theme.of(context).primaryColor,
             ),
             child: contact.img == null
-                ? const Icon(
-                    Icons.person,
-                    size: 75,
-              color: Colors.black,
-                  )
-                : null,
+                ? contact.name!.isEmpty
+                    ? const Icon(
+                        Icons.person,
+                        size: 75,
+                        color: Colors.black,
+                      )
+                    : Center(
+                        child: Text(
+                          contact.name!.substring(0, 1),
+                          style: const TextStyle(fontSize: 60, color: Colors.white),
+                        ),
+                      )
+                : Image.memory(
+                    contact.img!,
+                    fit: BoxFit.fill,
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10),
