@@ -28,9 +28,14 @@ abstract class ContactListControllerBase with Store {
   }
 
   @action
-  Future<void> goToContactPage(ContactModel? contact) async{
+  Future<void> goToContactPage(ContactModel? contact) async {
     await AppRoutes.goToContact(contact);
     getContactsFromDevice();
+  }
+
+  @action
+  void goToConfigPage() {
+    AppRoutes.goToConfigPage();
   }
 
   @action
@@ -38,14 +43,14 @@ abstract class ContactListControllerBase with Store {
     switch (result) {
       case OrderOptions.orderAZ:
         contacts.sort(
-              (a, b) {
+          (a, b) {
             return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
           },
         );
         break;
       case OrderOptions.orderZA:
         contacts.sort(
-              (a, b) {
+          (a, b) {
             return b.name!.toLowerCase().compareTo(a.name!.toLowerCase());
           },
         );
@@ -75,7 +80,7 @@ abstract class ContactListControllerBase with Store {
       this.contacts.clear();
       this.contacts.addAll(ObservableList.of([...newContacts]));
       this.contacts.sort(
-            (a, b) {
+        (a, b) {
           return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
         },
       );
@@ -85,8 +90,7 @@ abstract class ContactListControllerBase with Store {
   }
 
   Future<void> deleteContact(ContactModel contactModel, int index) async {
-    Contact? contactOrigin = await FlutterContacts.getContact(
-        contactModel.id ?? "");
+    Contact? contactOrigin = await FlutterContacts.getContact(contactModel.id ?? "");
     if (contactOrigin != null) {
       FlutterContacts.deleteContact(contactOrigin);
       contacts.removeAt(index);

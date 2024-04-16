@@ -87,6 +87,17 @@ mixin _$ContactListController on ContactListControllerBase, Store {
   }
 
   @override
+  void goToConfigPage() {
+    final _$actionInfo = _$ContactListControllerBaseActionController
+        .startAction(name: 'ContactListControllerBase.goToConfigPage');
+    try {
+      return super.goToConfigPage();
+    } finally {
+      _$ContactListControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void orderList(OrderOptions result) {
     final _$actionInfo = _$ContactListControllerBaseActionController
         .startAction(name: 'ContactListControllerBase.orderList');

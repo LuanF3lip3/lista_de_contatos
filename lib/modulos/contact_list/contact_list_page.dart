@@ -103,7 +103,9 @@ class _ContactListPageState extends State<ContactListPage> {
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.settings),
-              onPressed: () {},
+              onPressed: () {
+                controller.goToConfigPage();
+              },
             ),
             actions: [
               PopupMenuButton<OrderOptions>(
